@@ -1,0 +1,6 @@
+.idea/
+venv/
+env/
+.aws-sam
+infrastructure/.aws-sam/
+infrastructure/cloudformation-packaged.yaml

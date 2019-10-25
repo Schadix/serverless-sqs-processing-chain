@@ -1,0 +1,91 @@
+# will add polling for news later with event based Lambda - api key in SSM parameter store
+# use an index with last press_release_id in DynamoDB
+# store metadata in DynamoDB
+# could use Glue crawler later
+
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Chain of Lambda workers for SQS queues
+
+Resources:
+
+  # Lambda
+  # ======================
+  # Lambda functions are ordered in execution-sequence, starting with the Event trigger
+  FirstLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: index.lambda_handler
+      Runtime: python3.6
+      CodeUri: "../src/first/"
+      Timeout: 10
+      Environment:
+        Variables:
+          OUTPUT_QUEUE:
+            Ref: SecondSQS
+          LOG_LEVEL: 'DEBUG'
+      Policies: AmazonSQSFullAccess
+      Events:
+        FirstSQSEvent:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt FirstSQS.Arn
+            BatchSize: 10
+
+  SecondLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: index.lambda_handler
+      Runtime: python3.6
+      CodeUri: "../src/second/"
+      Timeout: 10
+      Environment:
+        Variables:
+          OUTPUT_QUEUE:
+            Ref: ThirdSQS
+          LOG_LEVEL: 'DEBUG'
+      Policies: AmazonSQSFullAccess
+      Events:
+        SecondSQSEvent:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt SecondSQS.Arn
+            BatchSize: 10
+
+  ThirdLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: index.lambda_handler
+      Runtime: python3.6
+      CodeUri: "../src/third/"
+      Timeout: 10
+      Policies: AmazonSQSFullAccess
+      Environment:
+        Variables:
+          LOG_LEVEL: 'DEBUG'
+      Events:
+        ThirdSQSEvent:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt ThirdSQS.Arn
+            BatchSize: 10
+
+
+  # SQS
+  # ===
+
+  # Queue with HTTP URLs for news requests
+  FirstSQS:
+    Type: AWS::SQS::Queue
+    Properties:
+      VisibilityTimeout: 360
+
+  SecondSQS:
+    Type: AWS::SQS::Queue
+    Properties:
+      VisibilityTimeout: 360
+
+  ThirdSQS:
+    Type: AWS::SQS::Queue
+    Properties:
+      VisibilityTimeout: 360
