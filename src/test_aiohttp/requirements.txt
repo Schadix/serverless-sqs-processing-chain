@@ -1,5 +1,2 @@
-boto3
-botocore
-aws-sam-cli
 requests
 aiohttp[speedups]

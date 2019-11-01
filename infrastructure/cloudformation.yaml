@@ -71,6 +71,19 @@ Resources:
             Queue: !GetAtt ThirdSQS.Arn
             BatchSize: 10
 
+  TestAIOHTTP:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: index.lambda_handler
+      Runtime: python3.6
+      MemorySize: 1024
+      CodeUri: "../src/test_aiohttp/"
+      Timeout: 900
+      ReservedConcurrentExecutions: 5
+      Environment:
+        Variables:
+          LOG_LEVEL: 'DEBUG'
+
 
   # SQS
   # ===

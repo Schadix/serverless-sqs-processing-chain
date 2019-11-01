@@ -14,7 +14,7 @@ TEMPLATE_NAME=cloudformation
 STACK_NAME=sqs-processing
 
 # DEPLOY
-sam build --template ${TEMPLATE_NAME}.yaml
+sam build  --use-container --template ${TEMPLATE_NAME}.yaml
 
 sam package --s3-bucket ${S3_BUCKET} --s3-prefix ${TEMPLATE_NAME} --output-template-file ${TEMPLATE_NAME}-packaged.yaml
 
