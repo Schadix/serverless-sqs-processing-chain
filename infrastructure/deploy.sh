@@ -16,6 +16,6 @@ STACK_NAME=sqs-processing
 # DEPLOY
 sam build  --use-container --template ${TEMPLATE_NAME}.yaml
 
-sam package --s3-bucket ${S3_BUCKET} --s3-prefix ${TEMPLATE_NAME} --output-template-file ${TEMPLATE_NAME}-packaged.yaml
+sam package --s3-bucket "${S3_BUCKET}" --s3-prefix ${TEMPLATE_NAME} --output-template-file ${TEMPLATE_NAME}-packaged.yaml
 
 sam deploy --template-file ./${TEMPLATE_NAME}-packaged.yaml --stack-name ${STACK_NAME} --capabilities CAPABILITY_IAM --no-fail-on-empty-changeset

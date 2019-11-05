@@ -84,12 +84,21 @@ Resources:
         Variables:
           LOG_LEVEL: 'DEBUG'
 
+  # GoLang is not supported in ```sam build```. Bummer. Essentially means a separate cfn-template when using the same build script.
 
   # SQS
   # ===
 
   # Queue with HTTP URLs for news requests
   FirstSQS:
+    Type: AWS::SQS::Queue
+    Properties:
+      VisibilityTimeout: 360
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt FirstSQSDLQ.Arn
+        maxReceiveCount: 100
+
+  FirstSQSDLQ:
     Type: AWS::SQS::Queue
     Properties:
       VisibilityTimeout: 360

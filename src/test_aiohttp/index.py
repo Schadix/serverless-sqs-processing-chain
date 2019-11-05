@@ -60,7 +60,7 @@ def lambda_handler(event, context):
     print(json.dumps(event))
     log_level = os.environ.get('LOG_LEVEL', 'INFO')
     number_of_requests = int(os.environ.get('NR_REQUESTS', '100'))
-    request_timeout = float(os.environ.get('REQUEST_TIMEOUT', '1.0'))
+    request_timeout = float(os.environ.get('REQUEST_TIMEOUT', '5.0'))
     connection_timeout = 0.4
     logger.setLevel(log_level)
 
